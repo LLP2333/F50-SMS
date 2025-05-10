@@ -2802,13 +2802,7 @@ const handleFileUpload = (event) => {
     })
 }
 
-//打赏模态框设置
-const payModalState = localStorage.getItem('hidePayModal') || false
-!payModalState && showModal('#payModal')
-const onClosePayModal = () => {
-    closeModal('#payModal')
-    localStorage.setItem('hidePayModal', 'true')
-}
+
 
 
 //展开收起
