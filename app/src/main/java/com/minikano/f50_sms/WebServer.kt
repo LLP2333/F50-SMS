@@ -38,14 +38,14 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         val method = session?.method.toString()
         val uri = session?.uri?.removePrefix("/api") ?: "/"
         val sharedPrefsForToken = context_app.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        val auth_token = sharedPrefsForToken.getString(prefLoginToken,"admin")
+        val authToken = sharedPrefsForToken.getString(prefLoginToken,"admin")
         try {
 
             if(session?.uri != null && session.uri.contains("/api")){
                 // 获取请求头
                 val headers = session.headers ?: throw Exception("401")
                 val authHeader = headers["authorization"]
-                if (authHeader != auth_token) {
+                if (authHeader != authToken) {
                    throw Exception("401")
                 }
             }

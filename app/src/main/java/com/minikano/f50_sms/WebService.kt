@@ -58,31 +58,31 @@ class WebService : Service() {
             try{
                 val sharedPrefs = applicationContext.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 
-                val ADB_IP_ENABLED = sharedPrefs.getString("ADB_IP_ENABLED", "") ?: null
+                val adbIpEnabled = sharedPrefs.getString("ADB_IP_ENABLED", "") ?: null
 
-                if(ADB_IP_ENABLED == "true") {
+                if(adbIpEnabled == "true") {
 
-                    val ADB_IP =
+                    val adbIp =
                         sharedPrefs.getString("ADB_IP", "") ?: throw Exception("没有ADMIN_IP")
-                    val ADMIN_PWD =
+                    val adminPwd =
                         sharedPrefs.getString("ADMIN_PWD", "") ?: throw Exception("没有ADMIN_IP")
 
                     Log.d(
                         "ZTE_LOG", "读取网络ADB所需配置：ADB_IP:${
-                            ADB_IP
+                            adbIp
                         } ADMIN_PWD:${
-                            ADMIN_PWD
+                            adminPwd
                         }"
                     )
 
-                    val adb_wifi = ShellTool.executeShellFromAssetsSubfolderWithArgs(
+                    val adbWifi = ShellTool.executeShellFromAssetsSubfolderWithArgs(
                         applicationContext,
                         "shell/adbPort",
-                        "-ip", ADB_IP,
-                        "-pwd", ADMIN_PWD,
+                        "-ip", adbIp,
+                        "-pwd", adminPwd,
                         "-port", "5555"
                     )
-                    Log.d("ZTE_LOG", "ADB_WIFI自启动执行结果：$adb_wifi")
+                    Log.d("ZTE_LOG", "ADB_WIFI自启动执行结果：$adbWifi")
                 }else{
                     Log.d("ZTE_LOG", "不需要自启动ADB_WIFI")
                 }
@@ -95,12 +95,12 @@ class WebService : Service() {
 
             try{
                 Log.d("ZTE_LOG", "adb服务正在启动。。。")
-                val res_adb = ShellTool.executeShellFromAssetsSubfolderWithArgs(
+                val resAdb = ShellTool.executeShellFromAssetsSubfolderWithArgs(
                     applicationContext,
                     "shell/adb",
                     "devices"
                 )
-                Log.d("ZTE_LOG", "adb启动执行结果：${res_adb}")
+                Log.d("ZTE_LOG", "adb启动执行结果：${resAdb}")
             }
             catch (e:Exception){
                 Log.d("ZTE_LOG", "adb服务启动失败：${e.message}")
