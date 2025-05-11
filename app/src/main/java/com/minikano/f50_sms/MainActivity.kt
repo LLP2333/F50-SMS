@@ -41,12 +41,12 @@ import androidx.core.content.ContextCompat
 class MainActivity : ComponentActivity() {
 
     private val port = 2333
-    private val PREFS_NAME = "kano_ZTE_store"
-    private val PREF_GATEWAY_IP = "gateway_ip"
-    private val PREF_LOGIN_TOKEN = "login_token"
+    private val prefsName = "kano_ZTE_store"
+    private val prefGatewayIp = "gateway_ip"
+    private val prefLoginToken = "login_token"
     private val serverStatusLiveData = MutableLiveData<Boolean>()
-    private val SERVER_INTENT = "com.minikano.f50_sms.SERVER_STATUS_CHANGED"
-    private val UI_INTENT = "com.minikano.f50_sms.UI_STATUS_CHANGED"
+    private val serverIntent = "com.minikano.f50_sms.SERVER_STATUS_CHANGED"
+    private val uiIntent = "com.minikano.f50_sms.UI_STATUS_CHANGED"
 
     fun hasUsageAccessPermission(context: Context): Boolean {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
@@ -96,14 +96,14 @@ class MainActivity : ComponentActivity() {
         startForegroundService(intent)
 
         // 注册广播
-        registerReceiver(serverStatusReceiver, IntentFilter(SERVER_INTENT),
+        registerReceiver(serverStatusReceiver, IntentFilter(serverIntent),
             Context.RECEIVER_EXPORTED
         )
 
         setContent {
             val context = this@MainActivity
             val sharedPrefs = remember {
-                context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
             }
 
             val isServerRunning by serverStatusLiveData.observeAsState(false)
@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
             var gatewayIp by remember {
                 mutableStateOf(
                     sharedPrefs.getString(
-                        PREF_GATEWAY_IP,
+                        prefGatewayIp,
                         IPManager.getWifiGatewayIp(context) ?: "192.168.0.1:8080"
                     ) ?: "192.168.0.1:8080"
                 )
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
             var loginToken by remember {
                 mutableStateOf(
                     sharedPrefs.getString(
-                        PREF_LOGIN_TOKEN,
+                        prefLoginToken,
                         "admin"
                     ) ?: "admin"
                 )
@@ -132,9 +132,9 @@ class MainActivity : ComponentActivity() {
                     gatewayIp,
                     versionName = versionName ?: "未知" ,
                     onStopServer = {
-                        sendBroadcast(Intent(UI_INTENT).putExtra("status", false))
+                        sendBroadcast(Intent(uiIntent).putExtra("status", false))
                         serverStatusLiveData.postValue(false)
-                        Log.d("kano_ZTE_LOG", "user touched stop btn")
+                        Log.d("ZTE_LOG", "user touched stop btn")
                     }
                 )
             } else {
@@ -146,11 +146,11 @@ class MainActivity : ComponentActivity() {
                     onLoginTokenChange = { loginToken = it },
                     onConfirm = {
                         // 保存并重启服务器
-                        sharedPrefs.edit().putString(PREF_GATEWAY_IP, gatewayIp).apply()
-                        sharedPrefs.edit().putString(PREF_LOGIN_TOKEN, loginToken).apply()
-                        sendBroadcast(Intent(UI_INTENT).putExtra("status", true))
+                        sharedPrefs.edit().putString(prefGatewayIp, gatewayIp).apply()
+                        sharedPrefs.edit().putString(prefLoginToken, loginToken).apply()
+                        sendBroadcast(Intent(uiIntent).putExtra("status", true))
                         serverStatusLiveData.postValue(true)
-                        Log.d("kano_ZTE_LOG", "user touched start btn")
+                        Log.d("ZTE_LOG", "user touched start btn")
                         runADB()
                     }
                 )
@@ -167,14 +167,14 @@ class MainActivity : ComponentActivity() {
             try {
                 ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
                 ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
-                Log.d("kano_ZTE_LOG", "网络adb调试执行成功")
+                Log.d("ZTE_LOG", "网络adb调试执行成功")
             }catch(e:Exception) {
                 try {
                     ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
                     ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
-                    Log.d("kano_ZTE_LOG", "网络adb调试执行成功")
+                    Log.d("ZTE_LOG", "网络adb调试执行成功")
                 }catch(e:Exception) {
-                    Log.d("kano_ZTE_LOG", "网络adb调试出错： ${e.message}")
+                    Log.d("ZTE_LOG", "网络adb调试出错： ${e.message}")
                 }
             }
         }.start()
@@ -183,9 +183,9 @@ class MainActivity : ComponentActivity() {
     private val serverStatusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
-            if (action == SERVER_INTENT) {
+            if (action == serverIntent) {
                 val isRunning = intent.getBooleanExtra("status", false) ?: false
-                Log.d("kano_ZTE_LOG", "isServerRunning is $isRunning")
+                Log.d("ZTE_LOG", "isServerRunning is $isRunning")
                 serverStatusLiveData.postValue(isRunning)
             }
         }
@@ -230,7 +230,7 @@ fun InputUI(gatewayIp: String, onGatewayIpChange: (String) -> Unit,
 
                 // 登录口令输入框
                 OutlinedTextField(
-                    value = loginToken,
+                    value =   loginToken,
                     onValueChange = onLoginTokenChange,
                     label = { Text("登录口令(默认admin)") },
                     singleLine = true,

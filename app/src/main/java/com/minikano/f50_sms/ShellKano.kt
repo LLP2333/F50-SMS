@@ -90,7 +90,7 @@ class ShellKano {
             val cacheFile = getUiDoc(adbPath,context)
 
             val doc = cacheFile
-            Log.d("kano_ZTE_LOG","doc 读取 结果：${doc.getElementsByTagName("node")}")
+            Log.d("ZTE_LOG","doc 读取 结果：${doc.getElementsByTagName("node")}")
 
             //tap逻辑
             val nodes = doc.getElementsByTagName("node")
@@ -98,7 +98,7 @@ class ShellKano {
                 val node = nodes.item(i)
                 val attrs = node.attributes
                 val text = attrs.getNamedItem("text")?.nodeValue ?: ""
-                Log.d("kano_ZTE_LOG", "Node text: '$text'")
+                Log.d("ZTE_LOG", "Node text: '$text'")
                 if (text.contains(targetText)) {
                     val bounds = attrs.getNamedItem("bounds")?.nodeValue ?: continue
                     val regex = Regex("""\[(\d+),(\d+)\]\[(\d+),(\d+)\]""")
@@ -107,7 +107,7 @@ class ShellKano {
                     val tapX = (x1.toInt() + x2.toInt()) / 2
                     val tapY = (y1.toInt() + y2.toInt()) / 2
                     val result = runShellCommand("$adbPath shell input tap $tapX $tapY",context)?:throw Exception("执行 input tap 失败")
-                    Log.d("kano_ZTE_LOG","input tap 点击 坐标：$tapX,$tapY 结果：${result} ")
+                    Log.d("ZTE_LOG","input tap 点击 坐标：$tapX,$tapY 结果：${result} ")
                     return 0
                 }else if(text.contains("AT Command:")){
                     //说明已经在AT页面了
@@ -147,7 +147,7 @@ class ShellKano {
 
                     repeat(3){
                         runShellCommand("$adbPath shell input tap $tapX $tapY", context)
-                        Log.d("kano_ZTE_LOG", "点击输入框坐标：$tapX,$tapY")
+                        Log.d("ZTE_LOG", "点击输入框坐标：$tapX,$tapY")
                     }
 
                     Thread.sleep(200) // 稍等软键盘弹出
@@ -155,7 +155,7 @@ class ShellKano {
                     // 输入文本
                     val escapedInput = inputText.replace(" ", "%s")
                     runShellCommand("$adbPath shell input text \"$escapedInput\"", context)
-                    Log.d("kano_ZTE_LOG", "输入文本：$inputText")
+                    Log.d("ZTE_LOG", "输入文本：$inputText")
                     inputClicked = true
                     if(escapedInput.length>20){
                         Thread.sleep(500) // 稍等输入完毕
@@ -182,7 +182,7 @@ class ShellKano {
                     val tapX = (x1.toInt() + x2.toInt()) / 2
                     val tapY = (y1.toInt() + y2.toInt()) / 2
                     runShellCommand("$adbPath shell input tap $tapX $tapY", context)
-                    Log.d("kano_ZTE_LOG", "点击 $btnName 坐标：$tapX,$tapY")
+                    Log.d("ZTE_LOG", "点击 $btnName 坐标：$tapX,$tapY")
                     //继续检测result
                     if(resId != "") {
                         val res = getTextFromUIByResourceId(resId, adbPath, context)
@@ -223,7 +223,7 @@ class ShellKano {
                 }
             }
 
-            Log.d("kano_ZTE_LOG", "根据：$resId 共找到${resultTexts.size}条 result_text 文本：$resultTexts")
+            Log.d("ZTE_LOG", "根据：$resId 共找到${resultTexts.size}条 result_text 文本：$resultTexts")
             return resultTexts
         }
 
@@ -245,7 +245,7 @@ class ShellKano {
                 "$adbPath pull /sdcard/kano_ui.xml ${cacheFile.absolutePath}",
                 context
             ) ?: throw Exception("pull kano_ui.xml 失败")
-            Log.d("kano_ZTE_LOG", "adb pull 执行结果: $pullResult")
+            Log.d("ZTE_LOG", "adb pull 执行结果: $pullResult")
 
             if (!cacheFile.exists()) throw Exception("kano_ui.xml 文件不存在")
             return cacheFile
@@ -317,12 +317,12 @@ class ShellKano {
                 val output = process.inputStream.bufferedReader().readText()
                 process.waitFor()
 
-//                Log.d("kano_ZTE_LOG", "执行命令：${command.joinToString(" ")}")
-//                Log.d("kano_ZTE_LOG", "命令输出：$output")
+//                Log.d("ZTE_LOG", "执行命令：${command.joinToString(" ")}")
+//                Log.d("ZTE_LOG", "命令输出：$output")
 
                 output
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "executeShellFromAssetsSubfolderWithArgs 执行出错：${e.message}")
+                Log.d("ZTE_LOG", "executeShellFromAssetsSubfolderWithArgs 执行出错：${e.message}")
                 e.printStackTrace()
                 null
             }
@@ -356,7 +356,7 @@ class ShellKano {
 
                 return output
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "adb执行出错：${e.message}")
+                Log.d("ZTE_LOG", "adb执行出错：${e.message}")
                 e.printStackTrace()
             }
 

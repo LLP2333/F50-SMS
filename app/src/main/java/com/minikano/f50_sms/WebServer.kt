@@ -63,7 +63,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
             return try {
                 val temp = ShellKano.executeShellFromAssetsSubfolder(context_app,"shell/temp.sh")
                 val temp1 =  ShellKano.runShellCommand("cat /sys/class/thermal/thermal_zone1/temp")
-                Log.d("kano_ZTE_LOG", "获取CPU温度成功: $temp")
+                Log.d("ZTE_LOG", "获取CPU温度成功: $temp")
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
                     "application/json",
@@ -72,7 +72,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取CPU温度出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取CPU温度出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -94,7 +94,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 val idleDiff = idle2 - idle1
                 val usage = if (totalDiff > 0) (totalDiff - idleDiff).toFloat() / totalDiff else 0f
 
-                Log.d("kano_ZTE_LOG", "CPU 使用率：%.2f%%".format(usage * 100))
+                Log.d("ZTE_LOG", "CPU 使用率：%.2f%%".format(usage * 100))
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
                     "application/json",
@@ -103,7 +103,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取cpu使用率出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取cpu使用率出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -119,7 +119,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
             return try {
                 val info = runShellCommand("cat /proc/meminfo") ?: throw Exception("没有info")
                 val usage = parseMeminfo(info)
-                Log.d("kano_ZTE_LOG", "内存使用率：%.2f%%".format(usage * 100))
+                Log.d("ZTE_LOG", "内存使用率：%.2f%%".format(usage * 100))
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
                     "application/json",
@@ -128,7 +128,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取内存信息出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取内存信息出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -152,7 +152,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取网络adb信息出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取网络adb信息出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -179,7 +179,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                     val AT_slot_arr = rawParams["slot"] ?: throw Exception("qeury 缺少 slot 参数")
                     val AT_command = AT_command_arr[0]
                     val AT_slot = AT_slot_arr.getOrNull(0)?.toIntOrNull() ?: 0 // 如果取不到或不是数字，就用 0
-                    Log.d("kano_ZTE_LOG", "AT_command 传入参数：${AT_command}")
+                    Log.d("ZTE_LOG", "AT_command 传入参数：${AT_command}")
 
                     //复制依赖
                     val assetManager = context_app.assets
@@ -194,11 +194,11 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                             }
                         }
                     }catch(e:Exception){
-                        Log.d("kano_ZTE_LOG", "adb文件已存在， 无需复制")
+                        Log.d("ZTE_LOG", "adb文件已存在， 无需复制")
                     }
 
                     outFile_at.setExecutable(true)
-                    Log.d("kano_ZTE_LOG", "AT-outFile：${outFile_at.absolutePath}")
+                    Log.d("ZTE_LOG", "AT-outFile：${outFile_at.absolutePath}")
 
                     //AT+CGEQOSRDP=1
                     if (!AT_command.toString().startsWith("AT", ignoreCase = true)) {
@@ -218,8 +218,8 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                     if (res.startsWith(",")) {
                         res = res.removePrefix(",").trimStart()
                     }
-                    Log.d("kano_ZTE_LOG", "AT_cmd：$command")
-                    Log.d("kano_ZTE_LOG", "AT_result：$res")
+                    Log.d("ZTE_LOG", "AT_cmd：$command")
+                    Log.d("ZTE_LOG", "AT_result：$res")
                     val jsonResult = """{"result":"${res}"}"""
                     writer.write(jsonResult)
                 } catch (e: Exception) {
@@ -253,7 +253,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                     val rawParams = session?.parameters ?: throw Exception("缺少 query 参数")
                     val path_command_arr = rawParams["path"] ?: throw Exception("qeury 缺少 path 参数")
                     val path_command = path_command_arr[0]
-                    Log.d("kano_ZTE_LOG", "path 传入参数：${path_command}")
+                    Log.d("ZTE_LOG", "path 传入参数：${path_command}")
 
                     //复制依赖
                     val assetManager = context_app.assets
@@ -277,9 +277,9 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                                 input.copyTo(output)
                             }
                         }
-                        Log.d("kano_ZTE_LOG", "复制到 ${outFile_ttyd.absolutePath} 成功")
+                        Log.d("ZTE_LOG", "复制到 ${outFile_ttyd.absolutePath} 成功")
                     } catch (e: Exception) {
-                        Log.e("kano_ZTE_LOG", "复制失败：${e.message}")
+                        Log.e("ZTE_LOG", "复制失败：${e.message}")
                     }
 
                     //复制smb到外部存储
@@ -289,9 +289,9 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                                 input.copyTo(output)
                             }
                         }
-                        Log.d("kano_ZTE_LOG", "复制到 ${outFile_smb.absolutePath} 成功")
+                        Log.d("ZTE_LOG", "复制到 ${outFile_smb.absolutePath} 成功")
                     } catch (e: Exception) {
-                        Log.e("kano_ZTE_LOG", "复制失败：${e.message}")
+                        Log.e("ZTE_LOG", "复制失败：${e.message}")
                     }
 
                     try {
@@ -300,38 +300,38 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                                 input.copyTo(output)
                             }
                         }
-                        Log.d("kano_ZTE_LOG", "复制到 ${outFile_adb.absolutePath} 成功")
+                        Log.d("ZTE_LOG", "复制到 ${outFile_adb.absolutePath} 成功")
                     }catch(e:Exception){
-                        Log.d("kano_ZTE_LOG", "依赖文件已存在， 无需复制")
+                        Log.d("ZTE_LOG", "依赖文件已存在， 无需复制")
                     }
 
                     outFile_adb.setExecutable(true)
                     outFile_ttyd.setExecutable(true)
 
-                    Log.d("kano_ZTE_LOG", "adb-outFile：${outFile_adb.absolutePath}")
-                    Log.d("kano_ZTE_LOG", "adbPath：${outFile_adb.absolutePath}")
+                    Log.d("ZTE_LOG", "adb-outFile：${outFile_adb.absolutePath}")
+                    Log.d("ZTE_LOG", "adbPath：${outFile_adb.absolutePath}")
 
                     val adb_command = "${outFile_adb.absolutePath} disconnect"
                     val adb_result = runShellCommand(adb_command,context_app)
-                    Log.d("kano_ZTE_LOG", "adb_执行命令：$adb_command")
-                    Log.d("kano_ZTE_LOG", "adb_result：$adb_result")
+                    Log.d("ZTE_LOG", "adb_执行命令：$adb_command")
+                    Log.d("ZTE_LOG", "adb_result：$adb_result")
 
                     Thread.sleep(1000)//小睡一下
 
                     //复制smb到sdcard
                     val smb_res = runShellCommand("${outFile_adb.absolutePath} shell cp ${outFile_smb.absolutePath} /sdcard/${outFile_smb.name}",context_app)?:throw Exception("smb复制到sd卡失败")
-                    Log.d("kano_ZTE_LOG", "执行：${outFile_adb.absolutePath} shell cp ${outFile_smb.absolutePath} /sdcard/${outFile_smb.name}：$smb_res")
+                    Log.d("ZTE_LOG", "执行：${outFile_adb.absolutePath} shell cp ${outFile_smb.absolutePath} /sdcard/${outFile_smb.name}：$smb_res")
 
                     //复制ttyd到sdcard
                     val ttyd_res = runShellCommand("${outFile_adb.absolutePath} shell cp ${outFile_ttyd.absolutePath} /sdcard/${outFile_ttyd.name}",context_app)?:throw Exception("ttyd复制到sd卡失败")
-                    Log.d("kano_ZTE_LOG", "执行：${outFile_adb.absolutePath} shell cp ${outFile_ttyd.absolutePath} /sdcard/${outFile_ttyd.name}：$ttyd_res")
+                    Log.d("ZTE_LOG", "执行：${outFile_adb.absolutePath} shell cp ${outFile_ttyd.absolutePath} /sdcard/${outFile_ttyd.name}：$ttyd_res")
 
 
                     fun click_stage1(){
                         //打开工程模式活动
                         repeat(3){
                             val Eng_result = runShellCommand("${outFile_adb.absolutePath} shell am start -n com.sprd.engineermode/.EngineerModeActivity",context_app)?:throw Exception("工程模式活动打开失败")
-                            Log.d("kano_ZTE_LOG", "工程模式打开结果：$Eng_result")
+                            Log.d("ZTE_LOG", "工程模式打开结果：$Eng_result")
                         }
                         Thread.sleep(200)
                         val res_debug_log_btn = ShellKano.parseUiDumpAndClick("DEBUG&LOG",outFile_adb.absolutePath,context_app)
@@ -408,7 +408,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 val enabled = json.optBoolean("enabled", false)
                 val password = json.optString("password", "")
 
-                Log.d("kano_ZTE_LOG", "接收到ADB_WIFI配置：enabled=$enabled, password=$password")
+                Log.d("ZTE_LOG", "接收到ADB_WIFI配置：enabled=$enabled, password=$password")
 
                 val sharedPrefs = context_app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -427,7 +427,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                         .apply()
                 }
 
-                Log.d("kano_ZTE_LOG", "保存结果：ADB_IP:${
+                Log.d("ZTE_LOG", "保存结果：ADB_IP:${
                     sharedPrefs.getString("ADB_IP", "")
                 } ADMIN_PWD:${
                     sharedPrefs.getString("ADMIN_PWD", "")
@@ -441,7 +441,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "解析ADB_WIFI POST 请求出错：${e.message}")
+                Log.d("ZTE_LOG", "解析ADB_WIFI POST 请求出错：${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -461,7 +461,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 val packageName = context_app.packageName
                 val versionName = packageManager.getPackageInfo(packageName, 0).versionName
 
-                Log.d("kano_ZTE_LOG", "型号与电量：$model $batteryLevel")
+                Log.d("ZTE_LOG", "型号与电量：$model $batteryLevel")
 
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
@@ -471,7 +471,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取型号与电量信息出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取型号与电量信息出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -553,7 +553,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
 
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "测速出错： ${e.message}")
+                Log.d("ZTE_LOG", "测速出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -575,7 +575,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
 
                 val code = getStatusCode("http://$host:${portParam[0]}")
 
-                Log.d("kano_ZTE_LOG", "TTYD获取ip+port信息： ${"$host:$portParam 返回code:$code"}")
+                Log.d("ZTE_LOG", "TTYD获取ip+port信息： ${"$host:$portParam 返回code:$code"}")
 
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
@@ -585,7 +585,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取TTYD信息出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取TTYD信息出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -614,9 +614,9 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 var ex_storage_used_size = ex_storage_total_size - ex_storage_avalible_size
 
 
-                Log.d("kano_ZTE_LOG","日用流量：$dailyData")
-                Log.d("kano_ZTE_LOG","内部存储：$usedSize/$totalSize")
-                Log.d("kano_ZTE_LOG","外部存储：${(ex_storage_info?.availableBytes?:0)}/${(ex_storage_info?.totalBytes?:0)}")
+                Log.d("ZTE_LOG","日用流量：$dailyData")
+                Log.d("ZTE_LOG","内部存储：$usedSize/$totalSize")
+                Log.d("ZTE_LOG","外部存储：${(ex_storage_info?.availableBytes?:0)}/${(ex_storage_info?.totalBytes?:0)}")
 
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
@@ -626,7 +626,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                 response.addHeader("Access-Control-Allow-Origin", "*")
                 response
             } catch (e: Exception) {
-                Log.d("kano_ZTE_LOG", "获取型号与电量信息出错： ${e.message}")
+                Log.d("ZTE_LOG", "获取型号与电量信息出错： ${e.message}")
                 val response = newFixedLengthResponse(
                     Response.Status.INTERNAL_ERROR,
                     "application/json",
@@ -659,7 +659,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
             return response
         }
 
-        Log.d("kano_ZTE_LOG", fullUrl)
+        Log.d("ZTE_LOG", fullUrl)
 
         // 构造目标 URL
         return try {
@@ -687,12 +687,12 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
 
                     // 将请求体转换为字符串
                     val requestBodyStr = String(requestBody, Charsets.UTF_8)
-                    Log.d("kano_ZTE_LOG", "Request Length: ${requestBodyStr.length}")
-                    Log.d("kano_ZTE_LOG", "Request Body: $requestBodyStr")
+                    Log.d("ZTE_LOG", "Request Length: ${requestBodyStr.length}")
+                    Log.d("ZTE_LOG", "Request Body: $requestBodyStr")
 
                     // 解析 URL 编码格式的请求体
                     val params = parseUrlEncoded(requestBodyStr)
-                    Log.d("kano_ZTE_LOG", "Parsed Body: $params")
+                    Log.d("ZTE_LOG", "Parsed Body: $params")
 
                     // 发送请求体到目标服务器
                     conn.doOutput = true

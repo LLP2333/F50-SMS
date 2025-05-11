@@ -26,7 +26,7 @@ class WebService : Service() {
     private val statusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
-            Log.d("kano_ZTE_LOG", "WebService 收到 Intent")
+            Log.d("ZTE_LOG", "WebService 收到 Intent")
             if (action == UI_INTENT) {
                 val shouldStart = intent.getBooleanExtra("status", false)
                 if (shouldStart) {
@@ -45,14 +45,14 @@ class WebService : Service() {
             try {
                 ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
                 ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
-                Log.d("kano_ZTE_LOG", "网络adb调试执行成功")
+                Log.d("ZTE_LOG", "网络adb调试执行成功")
             }catch(e:Exception) {
                 try {
                     ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
                     ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
-                    Log.d("kano_ZTE_LOG", "网络adb调试执行成功")
+                    Log.d("ZTE_LOG", "网络adb调试执行成功")
                 }catch(e:Exception) {
-                    Log.d("kano_ZTE_LOG", "网络adb调试出错： ${e.message}")
+                    Log.d("ZTE_LOG", "网络adb调试出错： ${e.message}")
                 }
             }
             Thread.sleep(500)
@@ -69,7 +69,7 @@ class WebService : Service() {
                         sharedPrefs.getString("ADMIN_PWD", "") ?: throw Exception("没有ADMIN_IP")
 
                     Log.d(
-                        "kano_ZTE_LOG", "读取网络ADB所需配置：ADB_IP:${
+                        "ZTE_LOG", "读取网络ADB所需配置：ADB_IP:${
                             ADB_IP
                         } ADMIN_PWD:${
                             ADMIN_PWD
@@ -83,28 +83,28 @@ class WebService : Service() {
                         "-pwd", ADMIN_PWD,
                         "-port", "5555"
                     )
-                    Log.d("kano_ZTE_LOG", "ADB_WIFI自启动执行结果：$adb_wifi")
+                    Log.d("ZTE_LOG", "ADB_WIFI自启动执行结果：$adb_wifi")
                 }else{
-                    Log.d("kano_ZTE_LOG", "不需要自启动ADB_WIFI")
+                    Log.d("ZTE_LOG", "不需要自启动ADB_WIFI")
                 }
             }catch (e:Exception){
-                Log.d("kano_ZTE_LOG", "ADB_WIFI自启动执行错误：${e.message}")
+                Log.d("ZTE_LOG", "ADB_WIFI自启动执行错误：${e.message}")
                 e.printStackTrace()
             }
 
             Thread.sleep(5000)
 
             try{
-                Log.d("kano_ZTE_LOG", "adb服务正在启动。。。")
+                Log.d("ZTE_LOG", "adb服务正在启动。。。")
                 val res_adb = ShellKano.executeShellFromAssetsSubfolderWithArgs(
                     applicationContext,
                     "shell/adb",
                     "devices"
                 )
-                Log.d("kano_ZTE_LOG", "adb启动执行结果：${res_adb}")
+                Log.d("ZTE_LOG", "adb启动执行结果：${res_adb}")
             }
             catch (e:Exception){
-                Log.d("kano_ZTE_LOG", "adb服务启动失败：${e.message}")
+                Log.d("ZTE_LOG", "adb服务启动失败：${e.message}")
             }
         }.start()
     }
@@ -120,7 +120,7 @@ class WebService : Service() {
 
         runADB()
 
-        Log.d("kano_ZTE_LOG", "WebService Init Success!")
+        Log.d("ZTE_LOG", "WebService Init Success!")
     }
 
     private fun startWebServer() {
@@ -129,8 +129,8 @@ class WebService : Service() {
         Thread {
             webServer = WebServer(applicationContext, port, ip)
             webServer?.start()
-            Log.d("kano_ZTE_LOG", "Web server started on http://0.0.0.0:$port")
-            Log.d("kano_ZTE_LOG", "Web server proxy IP: $ip")
+            Log.d("ZTE_LOG", "Web server started on http://0.0.0.0:$port")
+            Log.d("ZTE_LOG", "Web server proxy IP: $ip")
             sendStickyBroadcast(Intent(SERVER_INTENT).putExtra("status", true))
         }.start()
     }
@@ -138,7 +138,7 @@ class WebService : Service() {
     private fun stopWebServer() {
         webServer?.stop()
         sendStickyBroadcast(Intent(SERVER_INTENT).putExtra("status", false))
-        Log.d("kano_ZTE_LOG", "Web server stopped")
+        Log.d("ZTE_LOG", "Web server stopped")
     }
 
     override fun onDestroy() {
@@ -184,6 +184,6 @@ class WebService : Service() {
             .build()
 
         startForeground(1, notification)
-        Log.d("kano_ZTE_LOG", "通知已建立")
+        Log.d("ZTE_LOG", "通知已建立")
     }
 }

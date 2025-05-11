@@ -10,7 +10,7 @@ class JSInterface(private val context: Context) {
 
     @JavascriptInterface
     fun setValue(value: String) {
-        Log.d("kano_ZTE_LOG", "JS 传来的值是：$value")
+        Log.d("ZTE_LOG", "JS 传来的值是：$value")
         this.value = value
     }
 
