@@ -18,15 +18,15 @@ import androidx.core.app.NotificationCompat
 class WebService : Service() {
     private var webServer: WebServer? = null
     private val port = 2333
-    private val SERVER_INTENT = "com.minikano.f50_sms.SERVER_STATUS_CHANGED"
-    private val UI_INTENT = "com.minikano.f50_sms.UI_STATUS_CHANGED"
-    private val PREFS_NAME = "kano_ZTE_store"
+    private val serverIntent = "com.minikano.f50_sms.SERVER_STATUS_CHANGED"
+    private val uiIntent = "com.minikano.f50_sms.UI_STATUS_CHANGED"
+    private val prefsName = "kano_ZTE_store"
 
     private val statusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val action = intent?.action
             Log.d("ZTE_LOG", "WebService 收到 Intent")
-            if (action == UI_INTENT) {
+            if (action == uiIntent) {
                 val shouldStart = intent.getBooleanExtra("status", false)
                 if (shouldStart) {
                     startWebServer()
@@ -56,7 +56,7 @@ class WebService : Service() {
             }
             Thread.sleep(500)
             try{
-                val sharedPrefs = applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                val sharedPrefs = applicationContext.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 
                 val ADB_IP_ENABLED = sharedPrefs.getString("ADB_IP_ENABLED", "") ?: null
 
@@ -113,7 +113,7 @@ class WebService : Service() {
         super.onCreate()
         startForegroundNotification()
         // 注册广播接收器
-        registerReceiver(statusReceiver, IntentFilter(UI_INTENT), Context.RECEIVER_EXPORTED)
+        registerReceiver(statusReceiver, IntentFilter(uiIntent), Context.RECEIVER_EXPORTED)
         startForeground(114514, createNotification())
         startWebServer()
 
@@ -130,13 +130,13 @@ class WebService : Service() {
             webServer?.start()
             Log.d("ZTE_LOG", "Web server started on http://0.0.0.0:$port")
             Log.d("ZTE_LOG", "Web server proxy IP: $ip")
-            sendStickyBroadcast(Intent(SERVER_INTENT).putExtra("status", true))
+            sendStickyBroadcast(Intent(serverIntent).putExtra("status", true))
         }.start()
     }
 
     private fun stopWebServer() {
         webServer?.stop()
-        sendStickyBroadcast(Intent(SERVER_INTENT).putExtra("status", false))
+        sendStickyBroadcast(Intent(serverIntent).putExtra("status", false))
         Log.d("ZTE_LOG", "Web server stopped")
     }
 

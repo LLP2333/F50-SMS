@@ -316,8 +316,7 @@ class ShellTool {
                 val output = process.inputStream.bufferedReader().readText()
                 process.waitFor()
 
-//                Log.d("ZTE_LOG", "执行命令：${command.joinToString(" ")}")
-//                Log.d("ZTE_LOG", "命令输出：$output")
+
 
                 output
             } catch (e: Exception) {

@@ -31,14 +31,14 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
 
     private val targetServer = "http://$gatewayIp"  // 目标服务器地址
     private val targetServerIP = gatewayIp  // 目标服务器地址
-    private val PREFS_NAME = "kano_ZTE_store"
-    private val PREF_LOGIN_TOKEN = "login_token"
+    private val prefsName = "kano_ZTE_store"
+    private val prefLoginToken = "login_token"
 
     override fun serve(session: IHTTPSession?): Response {
         val method = session?.method.toString()
         val uri = session?.uri?.removePrefix("/api") ?: "/"
-        val sharedPrefsForToken = context_app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val auth_token = sharedPrefsForToken.getString(PREF_LOGIN_TOKEN,"admin")
+        val sharedPrefsForToken = context_app.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+        val auth_token = sharedPrefsForToken.getString(prefLoginToken,"admin")
         try {
 
             if(session?.uri != null && session.uri.contains("/api")){
@@ -141,7 +141,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         //自启无线adb
         if (method == "GET" && uri == "/adb_wifi_setting") {
             return try {
-                val sharedPrefs = context_app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                val sharedPrefs = context_app.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
                 val ADB_IP_ENABLED = sharedPrefs.getString("ADB_IP_ENABLED", "false")
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
@@ -409,7 +409,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
 
                 Log.d("ZTE_LOG", "接收到ADB_WIFI配置：enabled=$enabled, password=$password")
 
-                val sharedPrefs = context_app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                val sharedPrefs = context_app.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 
                 val host = targetServerIP.substringBefore(":")
 
