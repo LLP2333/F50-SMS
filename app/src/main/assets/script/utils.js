@@ -324,7 +324,12 @@ const createCollapseObserver = (boxEl = null) => {
 
 const collapseGen = (btn_id, collapse_id, storName) => {
     const { el: collapseMenuEl } = createCollapseObserver(document.querySelector(collapse_id))
-    collapseMenuEl.dataset.name = localStorage.getItem(storName) || 'open'
+    // 对于锁频和锁基站部分，默认为"close"状态
+    if (storName === 'collapse_lkband' || storName === 'collapse_lkcell') {
+        collapseMenuEl.dataset.name = localStorage.getItem(storName) || 'close'
+    } else {
+        collapseMenuEl.dataset.name = localStorage.getItem(storName) || 'open'
+    }
     const collapseBtn = document.querySelector(btn_id)
     const switchComponent = createSwitch({
         value: collapseMenuEl.dataset.name == 'open',
