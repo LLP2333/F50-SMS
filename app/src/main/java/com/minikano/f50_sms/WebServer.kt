@@ -916,31 +916,4 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         return null
     }
 
-    //超级低能代码，不建议使用
-    fun getMaxTemperature(): Int? {
-        val temperatures = mutableListOf<Int>()
-
-        // 遍历 zone0 到 zone30
-        for (i in 0..25) {
-            val zone = "/sys/class/thermal/thermal_zone$i/temp"
-            val temp = ShellTool.runShellCommand("cat $zone")
-
-            if (!temp.isNullOrEmpty()) {
-                try {
-                    temperatures.add(temp.toInt())  // 添加有效的温度值到列表
-                } catch (e: NumberFormatException) {
-                    // 如果温度值无法解析为整数，可以忽略该值
-                    continue
-                }
-            }
-        }
-
-        // 如果没有有效的温度值，返回 null
-        if (temperatures.isEmpty()) {
-            return null
-        }
-
-        // 对温度值排序并取最大值
-        return temperatures.sortedDescending().first()
-    }
 }
