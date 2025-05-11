@@ -40,7 +40,7 @@ import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
 
-    private val port = 2333
+    private val port = 8000
     private val prefsName = "kano_ZTE_store"
     private val prefGatewayIp = "gateway_ip"
     private val prefLoginToken = "login_token"
@@ -287,10 +287,10 @@ fun ServerUI(serverAddress: String,gatewayIP:String, onStopServer: () -> Unit,ve
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 HyperlinkText(
-                    "在手机安装使用的，请点击localhost:2333跳转",
-                    "localhost:2333",
+                    "在手机安装使用的，请点击localhost:8000跳转",
+                    "localhost:8000",
                     fontSize = 10.sp,
-                    url = "http://localhost:2333"
+                    url = "http://localhost:8000"
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text("可点击停止服务更改网关和口令密码(默认admin)", fontSize = 12.sp)

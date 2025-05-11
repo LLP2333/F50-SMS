@@ -17,7 +17,7 @@ import androidx.core.app.NotificationCompat
 
 class WebService : Service() {
     private var webServer: WebServer? = null
-    private val port = 2333
+    private val port = 8000
     private val serverIntent = "com.minikano.f50_sms.SERVER_STATUS_CHANGED"
     private val uiIntent = "com.minikano.f50_sms.UI_STATUS_CHANGED"
     private val prefsName = "kano_ZTE_store"
