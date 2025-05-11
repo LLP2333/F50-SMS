@@ -1,7 +1,6 @@
 package com.minikano.f50_sms
 
 import android.content.Context
-import android.provider.DocumentsContract
 import android.util.Log
 import org.w3c.dom.Document
 import java.io.BufferedReader
@@ -12,7 +11,7 @@ import java.io.InputStreamReader
 import java.security.MessageDigest
 import javax.xml.parsers.DocumentBuilderFactory
 
-class ShellKano {
+class ShellTool {
     companion object {
 
         fun sha256(input: String): String {

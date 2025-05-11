@@ -1,6 +1,5 @@
 package com.minikano.f50_sms
 
-import android.app.usage.NetworkStats
 import android.app.usage.NetworkStatsManager
 import android.content.Context
 import android.content.Intent
@@ -10,8 +9,8 @@ import android.os.BatteryManager
 import android.os.Build
 import android.os.StatFs
 import android.util.Log
-import com.minikano.f50_sms.ShellKano.Companion.fillInputAndSend
-import com.minikano.f50_sms.ShellKano.Companion.runShellCommand
+import com.minikano.f50_sms.ShellTool.Companion.fillInputAndSend
+import com.minikano.f50_sms.ShellTool.Companion.runShellCommand
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,8 +60,8 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         //cpu温度
         if (method == "GET" && uri == "/temp") {
             return try {
-                val temp = ShellKano.executeShellFromAssetsSubfolder(context_app,"shell/temp.sh")
-                val temp1 =  ShellKano.runShellCommand("cat /sys/class/thermal/thermal_zone1/temp")
+                val temp = ShellTool.executeShellFromAssetsSubfolder(context_app,"shell/temp.sh")
+                val temp1 =  ShellTool.runShellCommand("cat /sys/class/thermal/thermal_zone1/temp")
                 Log.d("ZTE_LOG", "获取CPU温度成功: $temp")
                 val response = newFixedLengthResponse(
                     Response.Status.OK,
@@ -86,9 +85,9 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         //cpu使用率
         if (method == "GET" && uri == "/cpu") {
             return try {
-                val stat1 = ShellKano.runShellCommand("cat /proc/stat") ?: throw Exception("stat1没有数据")
+                val stat1 = ShellTool.runShellCommand("cat /proc/stat") ?: throw Exception("stat1没有数据")
                 val (total1, idle1) = parseCpuStat(stat1) ?:  throw Exception("parseCpuStat执行失败")
-                val stat2 = ShellKano.runShellCommand("cat /proc/stat") ?: throw Exception("stat2没有数据")
+                val stat2 = ShellTool.runShellCommand("cat /proc/stat") ?: throw Exception("stat2没有数据")
                 val (total2, idle2) = parseCpuStat(stat2) ?: throw Exception("parseCpuStat执行失败")
                 val totalDiff = total2 - total1
                 val idleDiff = idle2 - idle1
@@ -334,10 +333,10 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
                             Log.d("ZTE_LOG", "工程模式打开结果：$Eng_result")
                         }
                         Thread.sleep(200)
-                        val res_debug_log_btn = ShellKano.parseUiDumpAndClick("DEBUG&LOG",outFile_adb.absolutePath,context_app)
+                        val res_debug_log_btn = ShellTool.parseUiDumpAndClick("DEBUG&LOG",outFile_adb.absolutePath,context_app)
                         if(res_debug_log_btn == -1) throw Exception("点击 DEBUG&LOG 失败")
                         if(res_debug_log_btn == 0) {
-                            val res = ShellKano.parseUiDumpAndClick(
+                            val res = ShellTool.parseUiDumpAndClick(
                                 "Adb shell",
                                 outFile_adb.absolutePath,
                                 context_app
@@ -924,7 +923,7 @@ class WebServer(context: Context, port: Int,gatewayIp: String) : NanoHTTPD(port)
         // 遍历 zone0 到 zone30
         for (i in 0..25) {
             val zone = "/sys/class/thermal/thermal_zone$i/temp"
-            val temp = ShellKano.runShellCommand("cat $zone")
+            val temp = ShellTool.runShellCommand("cat $zone")
 
             if (!temp.isNullOrEmpty()) {
                 try {

@@ -165,13 +165,13 @@ class MainActivity : ComponentActivity() {
         //adb setprop service.adb.tcp.port 5555
         Thread {
             try {
-                ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
-                ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
+                ShellTool.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
+                ShellTool.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
                 Log.d("ZTE_LOG", "网络adb调试执行成功")
             }catch(e:Exception) {
                 try {
-                    ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
-                    ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
+                    ShellTool.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
+                    ShellTool.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
                     Log.d("ZTE_LOG", "网络adb调试执行成功")
                 }catch(e:Exception) {
                     Log.d("ZTE_LOG", "网络adb调试出错： ${e.message}")

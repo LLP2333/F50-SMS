@@ -1,6 +1,5 @@
 package com.minikano.f50_sms
 
-import android.R.attr.start
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -43,13 +42,13 @@ class WebService : Service() {
         //adb setprop service.adb.tcp.port 5555
         Thread {
             try {
-                ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
-                ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
+                ShellTool.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
+                ShellTool.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
                 Log.d("ZTE_LOG", "网络adb调试执行成功")
             }catch(e:Exception) {
                 try {
-                    ShellKano.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
-                    ShellKano.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
+                    ShellTool.runShellCommand("/system/bin/setprop service.adb.tcp.port 5555")
+                    ShellTool.runShellCommand("/system/bin/setprop persist.service.adb.tcp.port 5555")
                     Log.d("ZTE_LOG", "网络adb调试执行成功")
                 }catch(e:Exception) {
                     Log.d("ZTE_LOG", "网络adb调试出错： ${e.message}")
@@ -76,7 +75,7 @@ class WebService : Service() {
                         }"
                     )
 
-                    val adb_wifi = ShellKano.executeShellFromAssetsSubfolderWithArgs(
+                    val adb_wifi = ShellTool.executeShellFromAssetsSubfolderWithArgs(
                         applicationContext,
                         "shell/adbPort",
                         "-ip", ADB_IP,
@@ -96,7 +95,7 @@ class WebService : Service() {
 
             try{
                 Log.d("ZTE_LOG", "adb服务正在启动。。。")
-                val res_adb = ShellKano.executeShellFromAssetsSubfolderWithArgs(
+                val res_adb = ShellTool.executeShellFromAssetsSubfolderWithArgs(
                     applicationContext,
                     "shell/adb",
                     "devices"
